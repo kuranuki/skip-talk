@@ -1,6 +1,7 @@
 config/database.yml
 config/initial_settings.yml
 db/schema.rb
+db/*.sqlite3
 log/*.log*
 public/custom/*.html
 public/custom/*
