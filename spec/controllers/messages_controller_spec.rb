@@ -5,7 +5,7 @@ describe MessagesController do
   def mock_message(stubs={})
     @mock_message ||= mock_model(Message, stubs)
   end
-  
+
   describe "GET index" do
     it "assigns all messages as @messages" do
       Message.should_receive(:find).with(:all).and_return([mock_message])
@@ -39,7 +39,7 @@ describe MessagesController do
   end
 
   describe "POST create" do
-    
+
     describe "with valid params" do
       it "assigns a newly created message as @message" do
         Message.should_receive(:new).with({'these' => 'params'}).and_return(mock_message(:save => true))
@@ -50,10 +50,10 @@ describe MessagesController do
       it "redirects to the created message" do
         Message.stub!(:new).and_return(mock_message(:save => true))
         post :create, :message => {}
-        response.should redirect_to(message_url(mock_message))
+        response.should redirect_to(messages_url)
       end
     end
-    
+
     describe "with invalid params" do
       it "assigns a newly created but unsaved message as @message" do
         Message.stub!(:new).with({'these' => 'params'}).and_return(mock_message(:save => false))
@@ -67,11 +67,11 @@ describe MessagesController do
         response.should render_template('new')
       end
     end
-    
+
   end
 
   describe "PUT udpate" do
-    
+
     describe "with valid params" do
       it "updates the requested message" do
         Message.should_receive(:find).with("37").and_return(mock_message)
@@ -91,7 +91,7 @@ describe MessagesController do
         response.should redirect_to(message_url(mock_message))
       end
     end
-    
+
     describe "with invalid params" do
       it "updates the requested message" do
         Message.should_receive(:find).with("37").and_return(mock_message)
@@ -111,7 +111,7 @@ describe MessagesController do
         response.should render_template('edit')
       end
     end
-    
+
   end
 
   describe "DELETE destroy" do
@@ -120,7 +120,7 @@ describe MessagesController do
       mock_message.should_receive(:destroy)
       delete :destroy, :id => "37"
     end
-  
+
     it "redirects to the messages list" do
       Message.stub!(:find).and_return(mock_message(:destroy => true))
       delete :destroy, :id => "1"

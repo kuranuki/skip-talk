@@ -1,0 +1,22 @@
+%h1
+  Listing messages
+%table
+  %tr
+    %th
+      Content
+  - @messages.each do |message|
+    %tr
+      %td
+        = h message.content
+      %td
+        = link_to 'Show', message
+      %td
+        = link_to 'Edit', edit_message_path(message)
+      %td
+        = link_to 'Destroy', message, :confirm => 'Are you sure?', :method => :delete
+%br
+- form_for(Message.new) do |f|
+  %p
+    = f.label :message
+    = f.text_field :content
+    = f.submit "Push!"
