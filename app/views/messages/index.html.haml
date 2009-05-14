@@ -8,10 +8,6 @@
     %tr
       %td
         = h message.content
-      %td
-        = link_to 'Edit', edit_message_path(message)
-      %td
-        = link_to 'Destroy', message, :confirm => 'Are you sure?', :method => :delete
 %br
 - form_for(Message.new) do |f|
   %p
