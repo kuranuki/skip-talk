@@ -1,14 +1,7 @@
 config/database.yml
-config/initial_settings.yml
 db/schema.rb
 db/*.sqlite3
 log/*.log*
-public/custom/*.html
-public/custom/*
-public/javascripts/prototype.all.js
-public/javascripts/jquery.all.js
-public/stylesheets/skip.style.css
-lib/tasks/rspec.rake
 vendor/rails
 coverage
 tmp/*
