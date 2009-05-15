@@ -50,7 +50,7 @@ describe MessagesController do
       it "redirects to the created message" do
         Message.stub!(:new).and_return(mock_message(:save => true))
         post :create, :message => {}
-        response.should redirect_to(messages_url)
+        response.should redirect_to(root_url(:anchor => assigns[:message].id))
       end
     end
 
