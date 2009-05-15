@@ -5,9 +5,7 @@
         %a{ :name => "#{message.id}" }
         = h message.content
         %span{ :style => "color: orange; font-size: 90%; float: right;" }
-          (
-          =  message.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-          )
+          = "(#{message.updated_at.to_s(:db)})"
 
 %div{ :style => "position: fixed; bottom: 0; background-color: orange; height: 50px; width: 100%; padding-left: 50px;" }
   - form_for(Message.new) do |f|
