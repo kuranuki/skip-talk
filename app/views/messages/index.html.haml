@@ -13,3 +13,28 @@
       = f.label :message
       = f.text_field :content
       = f.submit "Say!"
+      Nickname:
+      %span#nickname_value
+        = cookies['skip-talk.nickname']
+      = link_to 'Change Nickname', '#', :id => 'change_nickname'
+      = text_field_tag 'nickname', '', :style => 'display: none;'
+- content_for :js do
+  :javascript
+    $(function() {
+      $('#change_nickname').click(function() {
+        $(this).hide();
+        $('#nickname').show().focus(); 
+      });
+      $('#nickname').blur(function() {
+        $.cookie('skip-talk.nickname', $(this).val(), {expires: 1});
+        $('#nickname_value').html($(this).val());
+        $('#change_nickname').show();
+        $(this).hide();
+      });
+      $('form#new_message').submit(function() {
+        var message_content = $('#message_content').val();
+        var nickname = $.cookie('skip-talk.nickname');
+        $('#message_content').val(nickname + ':' + message_content);
+      });
+    });
+

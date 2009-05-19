@@ -6,6 +6,7 @@
       SKIP-Talk
       = controller.action_name
     = stylesheet_link_tag 'scaffold'
+    = yield :css
   %body{ :onLoad => "document.getElementById('message_content').focus();" }
     %div{ :style => "border-bottom:1px solid silver" }
       %h1
@@ -13,3 +14,6 @@
       %p{ :style => "color: green; position: absolute; top: 0; right: 0;" }
         = flash[:notice]
     = yield
+  = javascript_include_tag 'jquery/jquery.js'
+  = javascript_include_tag 'jquery/plugins/jquery.cookie.js'
+  = yield :js
