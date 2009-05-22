@@ -5,7 +5,7 @@
         %span
           = "(#{message.updated_at.to_s(:db)})"
         %a{ :name => "#{message.id}" }
-        = h message.content
+        = SkipTalkParser.to_html message.content
 
 #message_input
   %p
@@ -27,13 +27,15 @@
         $('span#nickname_value').hide();
         $('#nickname').show().focus();
       });
+
       $('#nickname').blur(function() {
         $.cookie('skip-talk.nickname', $(this).val(), {expires: 7});
         $('#nickname_value').html($(this).val());
         $('#change_nickname').show();
         $('span#nickname_value').show();
         $(this).hide();
-      });
+      }).val($.cookie('skip-talk.nickname'));
+
       $('form#new_message').submit(function() {
         var message_content = $('#message_content').val();
         var nickname = $.cookie('skip-talk.nickname');
