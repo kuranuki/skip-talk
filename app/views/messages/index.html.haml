@@ -1,21 +1,21 @@
-%div{ :style => "margin-bottom: 100px; width: 60%;" }
+#message_list
   %ul
     - @messages.each do |message|
-      %li{ :style => "border-bottom: 1px dashed #e0e0e0;"}
-        %span{ :style => "color: orange; font-size: 70%; float: right;" }
+      %li
+        %span
           = "(#{message.updated_at.to_s(:db)})"
         %a{ :name => "#{message.id}" }
         = h message.content
 
-%div{ :style => "position: fixed; bottom: 0; background-color: orange; height: 100px; width: 100%; padding-left: 50px;" }
+#message_input
+  %p
+    Nickname:
+    %span#nickname_value
+      = cookies['skip-talk.nickname']
+    = link_to 'Change Nickname', '#', :id => 'change_nickname'
+    = text_field_tag 'nickname', '', :class => "invisible"
   - form_for(Message.new) do |f|
     %p
-      Nickname:
-      %span#nickname_value
-        = cookies['skip-talk.nickname']
-      = link_to 'Change Nickname', '#', :id => 'change_nickname'
-      = text_field_tag 'nickname', '', :style => 'display: none;'
-      %br
       = "#{f.label :message}:"
       = f.text_area :content, :size => "60x2"
       = f.submit "Say!"
@@ -24,18 +24,21 @@
     $(function() {
       $('#change_nickname').click(function() {
         $(this).hide();
+        $('span#nickname_value').hide();
         $('#nickname').show().focus();
       });
       $('#nickname').blur(function() {
-        $.cookie('skip-talk.nickname', $(this).val(), {expires: 1});
+        $.cookie('skip-talk.nickname', $(this).val(), {expires: 7});
         $('#nickname_value').html($(this).val());
         $('#change_nickname').show();
+        $('span#nickname_value').show();
         $(this).hide();
       });
       $('form#new_message').submit(function() {
         var message_content = $('#message_content').val();
         var nickname = $.cookie('skip-talk.nickname');
-        $('#message_content').val(nickname + ':' + message_content);
+        if(nickname)
+          $('#message_content').val(nickname + ':' + message_content);
       });
     });
 
