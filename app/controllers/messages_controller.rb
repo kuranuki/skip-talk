@@ -20,7 +20,7 @@ class MessagesController < ApplicationController
         flash[:notice] = 'Message was successfully created.'
         format.html { redirect_to(messages_url) }
         format.xml  { render :xml => @message, :status => :created, :location => messages_url(:anchor => @message.id) }
-        format.js   { render :json => @message.to_json, :status => :created, :location => messages_url(:anchor => @message.id) }
+        format.js   { render :json => message_to_json(@message), :status => :created, :location => messages_url(:anchor => @message.id) }
 
       else
         format.html { render :action => "new" }
@@ -43,6 +43,14 @@ class MessagesController < ApplicationController
       :order => "messages.updated_at DESC",
       :per_page => params[:per_page] || 10,
     }
+  end
+
+  def message_to_json(message)
+    returning(message.attributes) do |h|
+      h[:updated_at] = message.updated_at.to_s(:db)
+      h[:created_at] = message.created_at.to_s(:db)
+      h[:content] = SkipTalkParser.to_html message.content
+    end
   end
 
 end
