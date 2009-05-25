@@ -48,9 +48,11 @@ class MessagesController < ApplicationController
         flash[:notice] = 'Message was successfully created.'
         format.html { redirect_to(root_url(:anchor => @message.id)) }
         format.xml  { render :xml => @message, :status => :created, :location => @message }
+        format.js   { render :json => @message.to_json }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @message.errors, :status => :unprocessable_entity }
+        format.js   { render :json => @message.errors.to_json, :status => :unprocessable_entity }
       end
     end
   end

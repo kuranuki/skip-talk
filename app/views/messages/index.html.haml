@@ -37,10 +37,25 @@
       }).val($.cookie('skip-talk.nickname'));
 
       $('form#new_message').submit(function() {
-        var message_content = $('#message_content').val();
+        var message_content = $('#message_content');
         var nickname = $.cookie('skip-talk.nickname');
         if(nickname)
-          $('#message_content').val(nickname + ':' + message_content);
+          message_content.val(nickname + ':' + message_content.val());
+        $.ajax({
+          type: "POST",
+          data: $(this).serialize(),
+          url: $(this).attr("action") + ".js",
+          complete: function(req, stat){
+            append_message(eval('('+req.responseText+')').message);
+          }
+        });
+        message_content.val("");
+        return false;
       });
+
+      var append_message = function(message){
+        $("div#message_list ul").append("<li><span>(" + message.created_at + ")</span><a name=" + message.id + "></a>" + message.content + "</li>");
+        $('html,body').animate({ scrollTop: $('li:last').offset().top }, 'slow');
+      };
     });
 
