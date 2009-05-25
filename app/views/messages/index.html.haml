@@ -1,12 +1,7 @@
 #message_list
   %ul
-    - @messages.each do |message|
-      %li
-        %span
-          = "(#{message.updated_at.to_s(:db)})"
-        %a{ :name => "#{message.id}" }
-        = SkipTalkParser.to_html message.content
-
+    - @messages.reverse.each do |message|
+      = render message
 #message_input
   %p
     Nickname:
@@ -26,6 +21,7 @@
         $(this).hide();
         $('span#nickname_value').hide();
         $('#nickname').show().focus();
+        return false;
       });
 
       $('#nickname').blur(function() {

@@ -1,0 +1,5 @@
+#message_list
+  %ul
+    - @messages.each do |message|
+      = render message
+  = will_paginate @messages
