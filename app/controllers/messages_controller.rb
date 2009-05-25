@@ -2,11 +2,16 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.xml
   def index
-    @messages = Message.recent
+    @messages = if newer_than = params[:newer_than]
+                  Message.newer(newer_than)
+                else
+                  Message.recent
+                end
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @messages }
+      format.js   { render :json => @messages.map{|m| message_to_json(m) } }
     end
   end
 
@@ -50,6 +55,7 @@ class MessagesController < ApplicationController
       h[:updated_at] = message.updated_at.to_s(:db)
       h[:created_at] = message.created_at.to_s(:db)
       h[:content] = SkipTalkParser.to_html message.content
+      h[:id] = message.id
     end
   end
 

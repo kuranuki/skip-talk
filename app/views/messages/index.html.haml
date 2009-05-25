@@ -9,6 +9,10 @@
       = cookies['skip-talk.nickname']
     = link_to 'Change Nickname', '#', :id => 'change_nickname'
     = text_field_tag 'nickname', '', :class => "invisible"
+    Polling:
+    %span#polling_value
+      = cookies['skip-talk.polling']
+    = text_field_tag 'polling', cookies['skip-talk.polling']
   - form_for(Message.new) do |f|
     %p
       = "#{f.label :message}:"
@@ -54,5 +58,25 @@
         $("div#message_list ul").append("<li><span>(" + message.created_at + ")</span><a name=" + message.id + "></a>" + message.content + "</li>");
         $('html,body').animate({ scrollTop: $('li:last').offset().top }, 'slow');
       };
+
+      $('#polling').blur(function(){
+        $.cookie('skip-talk.polling', $(this).val());
+      });
+
+      function update(){
+        $.ajax({
+          type: "GET",
+          url: ".?format=js&newer_than="+$("div#message_list li:last a").attr('name'),
+          success: function(data){
+            var arr = eval('('+data+')');
+            $.each(arr, function(){
+              append_message(this);
+            });
+          }
+        })
+      };
+
+      var polling_val = $.cookie('skip-talk.polling') || 20000;
+      setInterval(update, polling_val);
     });
 
