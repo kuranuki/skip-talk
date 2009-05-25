@@ -46,7 +46,7 @@ class MessagesController < ApplicationController
   end
 
   def message_to_json(message)
-    returning(message.attributes) do |h|
+    returning({}) do |h|
       h[:updated_at] = message.updated_at.to_s(:db)
       h[:created_at] = message.created_at.to_s(:db)
       h[:content] = SkipTalkParser.to_html message.content
