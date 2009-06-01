@@ -14,7 +14,7 @@
   width: 60%; }
   #message_list li {
     border-bottom: 1px dashed #e0e0e0; }
-    #message_list li span {
+    #message_list li span.created_at {
       color: orange;
       font-size: 70%;
       float: right; }

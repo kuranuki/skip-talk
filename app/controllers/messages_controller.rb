@@ -5,13 +5,12 @@ class MessagesController < ApplicationController
     @messages = if since_id = params[:since_id]
                   Message.since(since_id)
                 else
-                  Message.recent
+                  Message.recent.reverse
                 end
-
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @messages }
-      format.js   { render :json => @messages.map{|m| message_to_json(m) } }
+      format.xml { render :xml => @messages }
+      format.js  { render :json => @messages.map{|m| message_to_json(m)} }
     end
   end
 
@@ -55,6 +54,8 @@ class MessagesController < ApplicationController
       h[:created_at] = message.created_at.to_s(:db)
       h[:content] = SkipTalkParser.to_html message.content
       h[:id] = message.id
+      h[:parent_id] = message.parent_id
+      h[:level] = message.level
     end
   end
 

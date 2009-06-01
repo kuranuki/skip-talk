@@ -1,7 +1,5 @@
 #message_list
   %ul
-    - @messages.reverse.each do |message|
-      = render message
 #message_input
   %p
     Nickname:
@@ -54,8 +52,19 @@
         return false;
       });
 
+      function initLoad(){
+        $.ajax({
+          type: "GET",
+          url: ".?format=js",
+          success: function(data){
+            append_data(data);
+          }
+        });
+      }
+      initLoad();
+
       var append_message = function(message){
-        $("div#message_list ul").append("<li><span>(" + message.created_at + ")</span><a name=" + message.id + "></a>" + message.content + "</li>");
+        $("div#message_list ul:first").append("<li><span class=\"created_at\">(" + message.created_at + ")</span><a name=" + message.id + "></a><span class=\"content\">" + message.content + "</span><ul></ul></li>");
         $('html,body').animate({ scrollTop: $('li:last').offset().top }, 'slow');
       };
 
@@ -68,14 +77,17 @@
           type: "GET",
           url: ".?format=js&since_id="+$("div#message_list li:last a").attr('name'),
           success: function(data){
-            var arr = eval('('+data+')');
-            $.each(arr, function(){
-              append_message(this);
-            });
+            append_data(data);
           }
-        })
+        });
       };
 
+      function append_data(data){
+        var arr = eval('('+data+')');
+        $.each(arr, function(){
+          append_message(this);
+        });
+      };
       var polling_val = $.cookie('skip-talk.polling') || 20000;
       setInterval(update, polling_val);
     });
