@@ -9,7 +9,7 @@ class SkipTalkParser
     return "" if text.empty?
     text = h(text)
     text = replace_br(text)
-    text = auto_link(text)
+#    text = auto_link(text)
   end
 
   def self.replace_br(text)
