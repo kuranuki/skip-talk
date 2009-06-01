@@ -4,6 +4,8 @@ class MessagesController < ApplicationController
   def index
     @messages = if since_id = params[:since_id]
                   Message.since(since_id)
+                elsif contein_id = params[:contein_tree]
+                  Message.tree(contein_id)
                 else
                   Message.recent.reverse
                 end

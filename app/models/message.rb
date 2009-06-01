@@ -10,4 +10,13 @@ class Message < ActiveRecord::Base
     { :conditions => ["id > ?", id],
       :order => "id ASC" }
   }
+
+  named_scope :id_asc, proc{
+    { :order => "id ASC"}
+  }
+
+  def self.tree(id)
+    part = self.find(id)
+    part.root.self_and_descendants.id_asc
+  end
 end

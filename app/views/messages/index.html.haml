@@ -64,23 +64,35 @@
       initLoad();
 
       var appendMessage = function(message){
-        if(findByMessageId(message.id).size() != 0){
-          return;
-        }
         var rootUl = $("#message_list ul:first");
-        if(message.parent_id){
-          if(findByMessageId(message.root_id).size() != 0){
-            target = findByMessageId(message.parent_id).parent("li").children('ul:first');
-            target.append(messageItem(message));
-            var nestRoot = $(findByMessageId(message.root_id)).parent("li");
-            nestRoot.appendTo(rootUl);
-          } else {
-            alert("not implemented.")
+        if(findByMessageId(message.id).size() != 0){
+          var nestRoot = $(findByMessageId(message.root_id)).parent("li:first");
+          nestRoot.appendTo(rootUl);
+        } else {
+          if(message.parent_id){
+            if(findByMessageId(message.root_id).size() != 0){
+              target = findByMessageId(message.parent_id).parent("li:first").children('ul:first');
+              target.append(messageItem(message));
+              var nestRoot = $(findByMessageId(message.root_id)).parent("li:first");
+              nestRoot.appendTo(rootUl);
+            } else {
+              appendMessageWithTree(message.id);
+            };
+          }else{
+            rootUl.append(messageItem(message));
           };
-        }else{
-          rootUl.append(messageItem(message));
+          $('html,body').animate({ scrollTop: $('li:last').offset().top });
         };
-        $('html,body').animate({ scrollTop: $('li:last').offset().top });
+      };
+
+      function appendMessageWithTree(id){
+        $.ajax({
+          type: "GET",
+          url: ".?format=js&contein_tree="+id,
+          success: function(data){
+            appendData(data);
+          }
+        });
       };
 
       function messageItem(message){
