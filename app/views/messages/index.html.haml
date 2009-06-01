@@ -1,5 +1,6 @@
 #message_list
   %ul
+%a{:name => "message_bottom"}
 #message_input
   %p
     Nickname:
@@ -43,8 +44,8 @@
           type: "POST",
           data: $(this).serialize(),
           url: $(this).attr("action") + ".js",
-          complete: function(req, stat){
-            appendMessage(eval('('+req.responseText+')'));
+          success: function(data){
+            appendData(data);
           }
         });
         message_content.val("");
@@ -53,6 +54,8 @@
       });
 
       function initLoad(){
+       var message_list = $('#message_list');
+       message_list.hide();
         $.ajax({
           type: "GET",
           url: ".?format=js",
@@ -60,8 +63,13 @@
             appendData(data);
           }
         });
+        message_list.show();
       }
       initLoad();
+
+      function moveToBottom(){
+        $('html,body').animate({ scrollTop: $('a[name="message_bottom"]').offset().top });
+      }
 
       var appendMessage = function(message){
         var rootUl = $("#message_list ul:first");
@@ -81,7 +89,6 @@
           }else{
             rootUl.append(messageItem(message));
           };
-          $('html,body').animate({ scrollTop: $('li:last').offset().top });
         };
       };
 
@@ -121,6 +128,7 @@
             appendData(data);
           }
         });
+
       };
 
       $('span.add').live("click", function(){
@@ -148,8 +156,8 @@
           type: "POST",
           data: $(this).serialize(),
           url: $(this).attr("action") + ".js",
-          complete: function(req, stat){
-            appendMessage(eval('('+req.responseText+')'));
+          success: function(data){
+            appendData(data);
           }
         });
         $(this).hide();
@@ -157,11 +165,17 @@
       });
 
       function appendData(data){
-        var arr = eval('('+data+')');
-        $.each(arr, function(){
-          appendMessage(this);
-        });
+        var dataObj = eval('('+data+')');
+        if($.isArray(dataObj)){
+          $.each(dataObj, function(){
+            appendMessage(this);
+          });
+        } else {
+          appendMessage(dataObj);
+        }
+        moveToBottom();
       };
+
       var polling_val = $.cookie('skip-talk.polling') || 20000;
       setInterval(update, polling_val);
 
