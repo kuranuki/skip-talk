@@ -70,9 +70,9 @@
         var rootUl = $("#message_list ul:first");
         if(message.parent_id){
           if(findByMessageId(message.root_id).size() != 0){
-            target = findByMessageId(message.parent_id).parent().children('ul:first');
+            target = findByMessageId(message.parent_id).parent("li").children('ul:first');
             target.append(messageItem(message));
-            var nestRoot = $(findByMessageId(message.root_id)).parent();
+            var nestRoot = $(findByMessageId(message.root_id)).parent("li");
             nestRoot.appendTo(rootUl);
           } else {
             alert("not implemented.")
@@ -85,12 +85,14 @@
 
       function messageItem(message){
         var li = $("<li></li>");
+        var rightMenu = $('<span class="right_menu"></span>');
         var created_at = $("<span class=\"created_at\">(" + message.created_at + ")</span>");
+        var add = $("<span class=\"add\">+</span>");
+        rightMenu.append(add).append(created_at);
         var id_name = $("<a name=" + message.id + "></a>");
         var content = $("<span class=\"content\">" + message.content + "</span>");
-        var add = $("<span class=\"add\">+</span>");
         var child_ul = $("<ul></ul>");
-        li.append(created_at).append(id_name).append(content).append(add).append(child_ul);
+        li.append(rightMenu).append(id_name).append(content).append(child_ul);
         li.data("message",message);
         return li;
       };
@@ -110,13 +112,19 @@
       };
 
       $('span.add').live("click", function(){
-        var form = $('<form action="/messages" method="post" class="nest_comment"></form>');
-        var textArea = $('<textarea rows="2" name="message[content]" cols="60"></textarea>');
-        var token = $("input[name='authenticity_token']:first").clone();
-        var parent = $('<input type="hidden" name="message[parent_id]" value="'+$(this).parent().data('message').id+'">');
-        var submit = $('<input type="submit" value="Say"></input>');
-        form.append(textArea).append(token).append(parent).append(submit);
-        $(this).after(form);
+        if($(this).data("showed") != true){
+          var form = $('<form action="/messages" method="post" class="nest_comment"></form>');
+          var textArea = $('<textarea rows="2" name="message[content]" cols="60"></textarea>');
+          var token = $("input[name='authenticity_token']:first").clone();
+          var parent = $('<input type="hidden" name="message[parent_id]" value="'+$(this).parents('li:first').data('message').id+'">');
+          var submit = $('<input type="submit" value="Say"></input>');
+          form.append(textArea).append(token).append(parent).append(submit);
+          $(this).parents("li:first").append(form);
+          $(this).data("showed", true)
+        } else {
+          $(this).parents("li:first").find("form").remove();
+          $(this).data("showed", false)
+        };
       });
 
       $('form.nest_comment').live('submit', function(){

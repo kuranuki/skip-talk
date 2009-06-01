@@ -12,12 +12,22 @@
 #message_list {
   margin-bottom: 100px;
   width: 60%; }
+  #message_list ul {
+    list-style: none; }
   #message_list li {
-    border-bottom: 1px dashed #e0e0e0; }
+    border-bottom: 1px dashed #e0e0e0;
+    margin: 0.5em 0; }
+    #message_list li span.right_menu {
+      float: right; }
     #message_list li span.created_at {
       color: orange;
-      font-size: 70%;
-      float: right; }
+      font-size: 70%; }
+    #message_list li span.add {
+      color: blue;
+      font-size: 150%; }
+      #message_list li span.add:hover {
+        color: #fff;
+        background-color: #000; }
 
 #message_input {
   position: fixed;

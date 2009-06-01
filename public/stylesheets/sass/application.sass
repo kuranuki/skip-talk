@@ -20,12 +20,22 @@
 #message_list
   :margin-bottom 100px
   :width 60%
+  ul
+    :list-style none
   li
     :border-bottom 1px dashed #e0e0e0
+    :margin 0.5em 0
+    span.right_menu
+      :float right
     span.created_at
       :color orange
       :font-size 70%
-      :float right
+    span.add
+      :color blue
+      :font-size 150%
+      &:hover
+        :color #fff
+        :background-color #000
 
 #message_input
   :position fixed
