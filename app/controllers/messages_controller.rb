@@ -23,7 +23,6 @@ class MessagesController < ApplicationController
         format.js   { render :json => message_to_json(@message), :status => :created, :location => messages_url(:anchor => @message.id) }
 
       else
-        format.html { render :action => "new" }
         format.xml  { render :xml => @message.errors, :status => :unprocessable_entity }
         format.js   { render :json => @message.errors.to_json, :status => :unprocessable_entity }
       end
