@@ -1,2 +1,2 @@
 mislav-will_paginate --version '>=2.3.6' --source gems.github.com
-
+collectiveidea-awesome_nested_set --source gems.github.com
