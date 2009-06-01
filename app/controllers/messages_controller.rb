@@ -2,8 +2,8 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.xml
   def index
-    @messages = if newer_than = params[:newer_than]
-                  Message.newer(newer_than)
+    @messages = if since_id = params[:since_id]
+                  Message.since(since_id)
                 else
                   Message.recent
                 end

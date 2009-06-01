@@ -66,7 +66,7 @@
       function update(){
         $.ajax({
           type: "GET",
-          url: ".?format=js&newer_than="+$("div#message_list li:last a").attr('name'),
+          url: ".?format=js&since_id="+$("div#message_list li:last a").attr('name'),
           success: function(data){
             var arr = eval('('+data+')');
             $.each(arr, function(){

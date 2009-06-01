@@ -5,7 +5,7 @@ class Message < ActiveRecord::Base
       :limit => 20 }
   }
 
-  named_scope :newer, proc{ |id|
+  named_scope :since, proc{ |id|
     { :conditions => ["id > ?", id],
       :order => "id ASC" }
   }

@@ -16,8 +16,8 @@ describe SkipTalkParser do
   end
 end
 
-describe SkipTalkParser, ".auto_link" do
-  it "URLが含まれる場合、aタグになること" do
-    SkipTalkParser.to_html("urlが変換されます。http://test.host/com").should =~ (/<a .*>.*<\/a>/)
-  end
-end
+# describe SkipTalkParser, ".auto_link" do
+#   it "URLが含まれる場合、aタグになること" do
+#     SkipTalkParser.to_html("urlが変換されます。http://test.host/com").should =~ (/<a .*>.*<\/a>/)
+#   end
+# end
