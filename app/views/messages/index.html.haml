@@ -21,7 +21,7 @@
     $(function() {
       $('#change_nickname').click(function() {
         $(this).hide();
-        $('span#nickname_value').hide();
+        $('#nickname_value').hide();
         $('#nickname').show().focus();
         return false;
       });
@@ -30,11 +30,11 @@
         $.cookie('skip-talk.nickname', $(this).val(), {expires: 7});
         $('#nickname_value').html($(this).val());
         $('#change_nickname').show();
-        $('span#nickname_value').show();
+        $('#nickname_value').show();
         $(this).hide();
       }).val($.cookie('skip-talk.nickname'));
 
-      $('form#new_message').submit(function() {
+      $('#new_message').submit(function() {
         var message_content = $('#message_content');
         var nickname = $.cookie('skip-talk.nickname');
         if(nickname)
@@ -44,7 +44,7 @@
           data: $(this).serialize(),
           url: $(this).attr("action") + ".js",
           complete: function(req, stat){
-            append_message(eval('('+req.responseText+')'));
+            appendMessage(eval('('+req.responseText+')'));
           }
         });
         message_content.val("");
@@ -57,15 +57,42 @@
           type: "GET",
           url: ".?format=js",
           success: function(data){
-            append_data(data);
+            appendData(data);
           }
         });
       }
       initLoad();
 
-      var append_message = function(message){
-        $("div#message_list ul:first").append("<li><span class=\"created_at\">(" + message.created_at + ")</span><a name=" + message.id + "></a><span class=\"content\">" + message.content + "</span><ul></ul></li>");
-        $('html,body').animate({ scrollTop: $('li:last').offset().top }, 'slow');
+      var appendMessage = function(message){
+        if(findByMessageId(message.id).size() != 0){
+          return;
+        }
+        var rootUl = $("#message_list ul:first");
+        if(message.parent_id){
+          if(findByMessageId(message.root_id).size() != 0){
+            target = findByMessageId(message.parent_id).parent().children('ul:first');
+            target.append(messageItem(message));
+            var nestRoot = $(findByMessageId(message.root_id)).parent();
+            nestRoot.appendTo(rootUl);
+          } else {
+            alert("not implemented.")
+          };
+        }else{
+          rootUl.append(messageItem(message));
+        };
+        $('html,body').animate({ scrollTop: $('li:last').offset().top });
+      };
+
+      function messageItem(message){
+        var li = $("<li></li>");
+        var created_at = $("<span class=\"created_at\">(" + message.created_at + ")</span>");
+        var id_name = $("<a name=" + message.id + "></a>");
+        var content = $("<span class=\"content\">" + message.content + "</span>");
+        var add = $("<span class=\"add\">+</span>");
+        var child_ul = $("<ul></ul>");
+        li.append(created_at).append(id_name).append(content).append(add).append(child_ul);
+        li.data("message",message);
+        return li;
       };
 
       $('#polling').blur(function(){
@@ -75,20 +102,60 @@
       function update(){
         $.ajax({
           type: "GET",
-          url: ".?format=js&since_id="+$("div#message_list li:last a").attr('name'),
+          url: ".?format=js&since_id=" + maxId(),
           success: function(data){
-            append_data(data);
+            appendData(data);
           }
         });
       };
 
-      function append_data(data){
+      $('span.add').live("click", function(){
+        var form = $('<form action="/messages" method="post" class="nest_comment"></form>');
+        var textArea = $('<textarea rows="2" name="message[content]" cols="60"></textarea>');
+        var token = $("input[name='authenticity_token']:first").clone();
+        var parent = $('<input type="hidden" name="message[parent_id]" value="'+$(this).parent().data('message').id+'">');
+        var submit = $('<input type="submit" value="Say"></input>');
+        form.append(textArea).append(token).append(parent).append(submit);
+        $(this).after(form);
+      });
+
+      $('form.nest_comment').live('submit', function(){
+        var message_content = $(this).find('textarea');
+        var nickname = $.cookie('skip-talk.nickname');
+        if(nickname)
+          message_content.val(nickname + ':' + message_content.val());
+        $.ajax({
+          type: "POST",
+          data: $(this).serialize(),
+          url: $(this).attr("action") + ".js",
+          complete: function(req, stat){
+            appendMessage(eval('('+req.responseText+')'));
+          }
+        });
+        $(this).hide();
+        return false;
+      });
+
+      function appendData(data){
         var arr = eval('('+data+')');
         $.each(arr, function(){
-          append_message(this);
+          appendMessage(this);
         });
       };
       var polling_val = $.cookie('skip-talk.polling') || 20000;
       setInterval(update, polling_val);
+
+      function maxId(){
+        var maxValue = 0;
+        $("#message_list li a").each(function(){
+        if(maxValue < this.name)
+          maxValue = this.name;
+        });
+        return maxValue;
+      }
+
+      function findByMessageId(id){
+        return $("a[name='"+id+"']");
+      };
     });
 

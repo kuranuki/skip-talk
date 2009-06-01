@@ -18,14 +18,15 @@ class MessagesController < ApplicationController
   # POST /messages.xml
   def create
     @message = Message.new(params[:message])
-
     respond_to do |format|
       if @message.save
+        if parent_id = params[:message][:parent_id] and parent = Message.find_by_id(parent_id)
+          @message.move_to_child_of parent
+        end
         flash[:notice] = 'Message was successfully created.'
         format.html { redirect_to(messages_url) }
         format.xml  { render :xml => @message, :status => :created, :location => messages_url(:anchor => @message.id) }
         format.js   { render :json => message_to_json(@message), :status => :created, :location => messages_url(:anchor => @message.id) }
-
       else
         format.xml  { render :xml => @message.errors, :status => :unprocessable_entity }
         format.js   { render :json => @message.errors.to_json, :status => :unprocessable_entity }
@@ -56,6 +57,7 @@ class MessagesController < ApplicationController
       h[:id] = message.id
       h[:parent_id] = message.parent_id
       h[:level] = message.level
+      h[:root_id] = message.root.id
     end
   end
 
