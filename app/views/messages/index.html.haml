@@ -20,6 +20,10 @@
 - content_for :js do
   :javascript
     $(function() {
+      $('#15').click(function() {
+        alert('hoge');
+      });
+
       $('#change_nickname').click(function() {
         $(this).hide();
         $('#nickname_value').hide();
@@ -106,7 +110,7 @@
         var li = $("<li></li>");
         var rightMenu = $('<span class="right_menu"></span>');
         var created_at = $("<span class=\"created_at\">(" + message.created_at + ")</span>");
-        var add = $("<span class=\"add\">+</span>");
+        var add = $("<span class=\"add\">[返信]</span>");
         rightMenu.append(add).append(created_at);
         var id_name = $("<a name=" + message.id + "></a>");
         var content = $("<span class=\"content\">" + message.content + "</span>");
