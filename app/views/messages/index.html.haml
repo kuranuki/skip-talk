@@ -20,6 +20,8 @@
 - content_for :js do
   :javascript
     $(function() {
+
+    // change nickname
       $('#change_nickname').click(function() {
         $(this).hide();
         $('#nickname_value').hide();
@@ -35,6 +37,7 @@
         $(this).hide();
       }).val($.cookie('skip-talk.nickname'));
 
+      // post new message
       $('#new_message').submit(function() {
         var message_content = $('#message_content');
         var nickname = $.cookie('skip-talk.nickname');
@@ -53,6 +56,7 @@
         return false;
       });
 
+      // load initial message
       function initLoad(){
        var message_list = $('#message_list');
        message_list.hide();
@@ -67,11 +71,27 @@
       }
       initLoad();
 
+      // use after loading new message
       function moveToBottom(){
         $('html,body').animate({ scrollTop: $('a[name="message_bottom"]').offset().top });
       }
 
-      var appendMessage = function(message){
+      // append data that is message list.
+      function appendData(data){
+        var dataObj = eval('('+data+')');
+        if($.isArray(dataObj)){
+          $.each(dataObj, function(){
+            appendMessage(this);
+          });
+        } else {
+          appendMessage(dataObj);
+        }
+        moveToBottom();
+      };
+
+      // Append a message in message list.
+      // Behavier is change when new message is nested message.
+      function appendMessage(message){
         var rootUl = $("#message_list ul:first");
         if(findByMessageId(message.id).size() != 0){
           var nestRoot = $(findByMessageId(message.root_id)).parent("li:first");
@@ -102,6 +122,7 @@
         });
       };
 
+      // create message dom obj.
       function messageItem(message){
         var li = $("<li></li>");
         var rightMenu = $('<span class="right_menu"></span>');
@@ -116,21 +137,7 @@
         return li;
       };
 
-      $('#polling').blur(function(){
-        $.cookie('skip-talk.polling', $(this).val());
-      });
-
-      function update(){
-        $.ajax({
-          type: "GET",
-          url: ".?format=js&since_id=" + maxId(),
-          success: function(data){
-            appendData(data);
-          }
-        });
-
-      };
-
+      // toggle nest comment form
       $('span.add').live("click", function(){
         if($(this).data("showed") != true){
           var form = $('<form action="/messages" method="post" class="nest_comment"></form>');
@@ -147,6 +154,7 @@
         };
       });
 
+      // nest comment submit
       $('form.nest_comment').live('submit', function(){
         var message_content = $(this).find('textarea');
         var nickname = $.cookie('skip-talk.nickname');
@@ -164,21 +172,23 @@
         return false;
       });
 
-      function appendData(data){
-        var dataObj = eval('('+data+')');
-        if($.isArray(dataObj)){
-          $.each(dataObj, function(){
-            appendMessage(this);
-          });
-        } else {
-          appendMessage(dataObj);
-        }
-        moveToBottom();
+      // set polling time
+      $('#polling').blur(function(){
+        $.cookie('skip-talk.polling', $(this).val());
+      });
+
+      // do polling
+      function update(){
+        $.ajax({
+          type: "GET",
+          url: ".?format=js&since_id=" + maxId(),
+          success: function(data){
+            appendData(data);
+          }
+        });
       };
 
-      var polling_val = $.cookie('skip-talk.polling') || 20000;
-      setInterval(update, polling_val);
-
+      // get max message id for get data with polling.
       function maxId(){
         var maxValue = 0;
         $("#message_list li a").each(function(){
@@ -187,6 +197,9 @@
         });
         return maxValue;
       }
+
+      var polling_val = $.cookie('skip-talk.polling') || 20000;
+      setInterval(update, polling_val);
 
       function findByMessageId(id){
         return $("a[name='"+id+"']");
